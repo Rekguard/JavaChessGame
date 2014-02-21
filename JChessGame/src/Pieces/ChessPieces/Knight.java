@@ -15,7 +15,7 @@ public class Knight extends ChessPiece {
 			moveOutline[i] = new ClickOutline("Orange");
 		}
 	}
-
+ 
 	public void loadOutlineTexture() {
 		for (int i = 0; i < moveOutline.length;i++){
 			moveOutline[i].loadTexture();
@@ -35,17 +35,23 @@ public class Knight extends ChessPiece {
 		int chaArrayPos = Character.getNumericValue(characterPosition) - 10;
 		int numArrayPos = numberPosition - 1;
 		
-		
 		int farLD = 0;		// Far Left side and Down have the same value
 		int clsLD = 1;		// Close Left side and Down have the same value
 		int clsRU = 6;		// Close Right side and Up have the same value
 		int farRU = 7;		// Far Right side and Up have the same value
 		
 		
+		if(this.getPieceColour().equals("White")){
+			oppositeColour = "Black";
+		}else {
+			oppositeColour = "White";
+		}
+		
 		
 			/* NNW */
 		if(chaArrayPos > farLD && numArrayPos < clsRU){
-			if(bpShow[chaArrayPos-1][numArrayPos+2].isOccupied() == false){
+			if(bpShow[chaArrayPos-1][numArrayPos+2].isOccupied() == false
+					|| bpShow[chaArrayPos-1][numArrayPos+2].chessPiece.getPieceColour().equals(oppositeColour)){
 				moveOutline[0].setOutlinePositon(bpShow[chaArrayPos-1][numArrayPos+2].getLocation());
 				moveOutline[0].drawAtLocation();
 			}
@@ -53,7 +59,8 @@ public class Knight extends ChessPiece {
 		
 			/* NWW */
 		if(chaArrayPos > clsLD && numArrayPos < farRU){
-			if(bpShow[chaArrayPos-2][numArrayPos+1].isOccupied() == false){
+			if(bpShow[chaArrayPos-2][numArrayPos+1].isOccupied() == false
+					|| bpShow[chaArrayPos-2][numArrayPos+1].chessPiece.getPieceColour().equals(oppositeColour)){
 				moveOutline[0].setOutlinePositon(bpShow[chaArrayPos-2][numArrayPos+1].getLocation());
 				moveOutline[0].drawAtLocation();
 			}
@@ -61,7 +68,8 @@ public class Knight extends ChessPiece {
 		
 			/* SWW */
 		if(chaArrayPos > clsLD && numArrayPos > farLD){
-			if(bpShow[chaArrayPos-2][numArrayPos-1].isOccupied() == false){
+			if(bpShow[chaArrayPos-2][numArrayPos-1].isOccupied() == false
+					|| bpShow[chaArrayPos-2][numArrayPos-1].chessPiece.getPieceColour().equals(oppositeColour)){
 				moveOutline[0].setOutlinePositon(bpShow[chaArrayPos-2][numArrayPos-1].getLocation());
 				moveOutline[0].drawAtLocation();
 			}
@@ -69,7 +77,8 @@ public class Knight extends ChessPiece {
 		
 			/* SSW */
 		if(chaArrayPos > farLD && numArrayPos > clsLD){
-			if(bpShow[chaArrayPos-1][numArrayPos-2].isOccupied() == false){
+			if(bpShow[chaArrayPos-1][numArrayPos-2].isOccupied() == false
+					|| bpShow[chaArrayPos-1][numArrayPos-2].chessPiece.getPieceColour().equals(oppositeColour)){
 				moveOutline[0].setOutlinePositon(bpShow[chaArrayPos-1][numArrayPos-2].getLocation());
 				moveOutline[0].drawAtLocation();
 			}
@@ -77,7 +86,8 @@ public class Knight extends ChessPiece {
 		
 			/* SSE */
 		if(chaArrayPos < farRU && numArrayPos > clsLD){	
-			if(bpShow[chaArrayPos+1][numArrayPos-2].isOccupied() == false){
+			if(bpShow[chaArrayPos+1][numArrayPos-2].isOccupied() == false
+					|| bpShow[chaArrayPos+1][numArrayPos-2].chessPiece.getPieceColour().equals(oppositeColour)){
 				moveOutline[0].setOutlinePositon(bpShow[chaArrayPos+1][numArrayPos-2].getLocation());
 				moveOutline[0].drawAtLocation();
 			}
@@ -85,7 +95,8 @@ public class Knight extends ChessPiece {
 		
 			/* SEE */
 		if(chaArrayPos < clsRU && numArrayPos > farLD){
-			if(bpShow[chaArrayPos+2][numArrayPos-1].isOccupied() == false){
+			if(bpShow[chaArrayPos+2][numArrayPos-1].isOccupied() == false
+					|| bpShow[chaArrayPos+2][numArrayPos-1].chessPiece.getPieceColour().equals(oppositeColour)){
 				moveOutline[0].setOutlinePositon(bpShow[chaArrayPos+2][numArrayPos-1].getLocation());
 				moveOutline[0].drawAtLocation();
 			}
@@ -93,7 +104,8 @@ public class Knight extends ChessPiece {
 		
 			/* NEE */
 		if( chaArrayPos < clsRU && numArrayPos < farRU){
-			if(bpShow[chaArrayPos+2][numArrayPos+1].isOccupied() == false){
+			if(bpShow[chaArrayPos+2][numArrayPos+1].isOccupied() == false
+					|| bpShow[chaArrayPos+2][numArrayPos+1].chessPiece.getPieceColour().equals(oppositeColour)){
 				moveOutline[0].setOutlinePositon(bpShow[chaArrayPos+2][numArrayPos+1].getLocation());
 				moveOutline[0].drawAtLocation();
 			}
@@ -101,25 +113,101 @@ public class Knight extends ChessPiece {
 		
 			/* NNE */
 		if( chaArrayPos < farRU && numArrayPos < clsRU){
-			if(bpShow[chaArrayPos+1][numArrayPos+2].isOccupied() == false){
+			if(bpShow[chaArrayPos+1][numArrayPos+2].isOccupied() == false
+					|| bpShow[chaArrayPos+1][numArrayPos+2].chessPiece.getPieceColour().equals(oppositeColour)){
 				moveOutline[0].setOutlinePositon(bpShow[chaArrayPos+1][numArrayPos+2].getLocation());
 				moveOutline[0].drawAtLocation();
 			}
 		}
 		
 	}
-
-	public boolean checkMove(BoardPosition[][] boardPosition) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
+	
 	protected void showSurroundings(BoardPosition[][] boardPosition,
 			int cPosition, int nPosition) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Unneeded method");
 	}
 
-	
+	public boolean checkMove(BoardPosition[][] boardPosition) {
+		
+		BoardPosition[][] bpShow = boardPosition;
+		charPosition = this.piecePosition.charAt(0);
+		numPosition = Character.getNumericValue(this.piecePosition.charAt(1))-1;
+		int chaArrayPos = Character.getNumericValue(charPosition) - 10;
+		int numArrayPos = numPosition - 1;
+		
+		
+		
+		int farLD = 0;		// Far Left side and Down have the same value
+		int clsLD = 1;		// Close Left side and Down have the same value
+		int clsRU = 5;		// Close Right side and Up have the same value
+		int farRU = 7;		// Far Right side and Up have the same value
+		
+		
+		if(this.getPieceColour().equals("White")){
+			oppositeColour = "Black";
+		}else {
+			oppositeColour = "White";
+		}
+		
+		
+			/* NNW */
+		if(chaArrayPos > farLD && numArrayPos < clsRU){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-1][oPosY+2].getLocation())){
+				return true;
+			}
+		}
+		
+		/* NWW */
+		if(chaArrayPos > clsLD && numArrayPos < farRU){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-2][oPosY+1].getLocation())){
+				return true;
+			}
+		}
+		
+			/* SWW */
+		if(chaArrayPos > clsLD && numArrayPos > farLD){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-2][oPosY-1].getLocation())){
+				return true;
+			}
+		}
+		
+			/* SSW */
+		if(chaArrayPos > farLD && numArrayPos > clsLD){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-1][oPosY-2].getLocation())){
+				return true;
+			}
+		}
+		
+		/* SSE */
+		if(chaArrayPos < farRU && numArrayPos > clsLD){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+1][oPosY-2].getLocation())){
+				return true;
+			}
+		}
+		
+			/* SEE */
+		if(chaArrayPos < clsRU && numArrayPos > farLD){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+2][oPosY-1].getLocation())){
+				return true;
+			}
+		}
+		
+			/* NEE */
+		if( chaArrayPos < clsRU && numArrayPos < farRU){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+2][oPosY+1].getLocation())){
+				return true;
+			}
+		}
+		
+			/* NNE */
+		if( chaArrayPos < farRU && numArrayPos < clsRU){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+1][oPosY+2].getLocation())){
+				return true;
+			}
+		}
+		
+		
+		
+		return false;
+	}
 }
