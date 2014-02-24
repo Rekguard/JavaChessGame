@@ -28,27 +28,17 @@ import org.lwjgl.opengl.DisplayMode;
 import ChessBoard.BoardPosition;
 import ChessBoard.ChessBoard;
 import ChessBoard.ClickOutline;
+import Controls.MouseControl;
 import Pieces.ChessPiece;
 import Pieces.ChessPieces.*;
 
 public class Screen {
 	
-	/*
-	 * 
-	 * 
-	 * GitHub TEST Massive Comment
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	
-	
-	
 	int screenSizeW;
 	int screenSizeH;
 	
 	ChessBoard cb = new ChessBoard();
+	MouseControl mc = new MouseControl();
 	
 	/*
 	 * 
@@ -62,13 +52,15 @@ public class Screen {
 	ChessPiece [] whitePieces = new ChessPiece[16];
 	ChessPiece [] blackPieces = new ChessPiece[16];
 	
-	ClickOutline my1stClick = new ClickOutline("Blue");
-	ClickOutline my2ndClick = new ClickOutline("Green");
-	ClickOutline myWrongClick = new ClickOutline("Red");
+//	ClickOutline my1stClick = new ClickOutline("Blue");
+//	ClickOutline my2ndClick = new ClickOutline("Green");
+//	ClickOutline myWrongClick = new ClickOutline("Red");
 	
-	private int firstClick = 0;
-	private int [] chaX = new int [2];
-	private int [] intY = new int [2];
+	ClickOutline [] clickArray = new ClickOutline[2];
+	
+	//private int firstClick = 0;
+//	private int [] chaX = new int [2];
+//	private int [] intY = new int [2];
 	
 	char letterPosition = 'A';
 	int numberPosition = 1;
@@ -78,13 +70,17 @@ public class Screen {
 	public Screen(int screenSizeWidth, int screenSizeHeight){
 		screenSizeW = screenSizeWidth;
 		screenSizeH = screenSizeHeight;
+		
+		clickArray[0] = new ClickOutline("Blue");
+		clickArray[1] = new ClickOutline("Green");
+		
 		screenSetup(screenSizeWidth,screenSizeHeight);
 	}
 	
 	private void screenSetup(int screenWidth, int screenHeight) {
 		{
 				// Calculate Aspect Ratio
-			float aspect = (float) screenWidth/screenHeight;
+			float aspectRatio = (float) screenWidth/screenHeight;
 				// Load Frame
 			try {
 				Display.setDisplayMode(new DisplayMode(screenWidth,screenHeight));
@@ -94,29 +90,30 @@ public class Screen {
 				e.printStackTrace();
 			}
 			
-			// Initialise Screen code
+				/* Initialise Screen Properties */
 			glEnable(GL_TEXTURE_2D);
 			glEnable(GL_BLEND); 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluPerspective(50.0f,aspect, 0.001f, 1000.0f);
+			gluPerspective(50.0f,aspectRatio, 0.001f, 1000.0f);
 			
 			glMatrixMode(GL_MODELVIEW);
 			glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 			glTranslatef(0.0f,0.0f,-20.0f);
 			
-			// Initialise Components code
+				/* Initialise Components */
 			init();
 			
 			
+				/* Display */
 			while(!Display.isCloseRequested()) {
-					// Render
+					/* Render Images */
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 				updatePiecePosition();
 				
-				input();
-				drawEverything();
+				mc.input(screenSizeH,bpos,clickArray);
+				draw();
 				//System.out.println(whitePieces[0].getPiecePosition());
 				Display.update();
 				Display.sync(60);				
@@ -127,6 +124,7 @@ public class Screen {
 		}
 	
 	}
+	
 	private void updatePiecePosition(){
 		for (int i = 0; i < 8; i++){
 			for (int j = 0; j< 8; j++){
@@ -139,7 +137,10 @@ public class Screen {
 	}
 
 	/*
+	 * 		Init
+	 * 
 	 * Initialise everything method.
+	 * 
 	 */
 	
 	private void init(){
@@ -147,14 +148,19 @@ public class Screen {
 		initBoardGrid();
 		setUpPieces();
 		loadAllGameTextures();
-		
-		
-		bpos[4][4].chessPiece = bpos[1][0].chessPiece;
-		bpos[1][0].chessPiece = null;
-		
-		//System.out.println(bpos[3][0].chessPiece.getPieceName());
-		
-	}	
+	}
+	
+	/* 
+	 * 		Draw
+	 * 
+	 * Draw all components
+	 * 
+	 */
+	private void draw(){
+		cb.drawComponents(2.0f);
+		drawComponents();
+	}
+	
 	
 	/*
 	 * Load Textures
@@ -162,9 +168,8 @@ public class Screen {
 	
 	private void loadAllGameTextures(){
 		glEnable(GL_TEXTURE_2D);
-		my1stClick.loadTexture();
-		my2ndClick.loadTexture();
-		myWrongClick.loadTexture();
+		clickArray[0].loadTexture();
+		clickArray[1].loadTexture();
 		
 		for (int i = 0; i < 16; i++){
 			whitePieces[i].loadTexture();
@@ -175,57 +180,79 @@ public class Screen {
 		glDisable(GL_TEXTURE_2D);
 	}
 	
-	/* 
-	 * Draw everything method. 
-	 */
-	
-	private void drawEverything(){
-		cb.drawComponents(2.0f);
-		drawComponents();
-	}
-	
 	private void drawComponents(){
+		
+			/* Enable Texturing */
 		glEnable(GL_TEXTURE_2D);
-		for (int i = 0; i <= 7; i++){
-			for(int j = 0; j <= 7; j++){
-				if (bpos[i][j].chessPiece != null){
-					bpos[i][j].chessPiece.drawChessPieceAtLocation();
+		
+				/* 
+				 * For loop loads all piece texture images on the board.
+				 */
+		
+			for (int i = 0; i <= 7; i++){
+				for(int j = 0; j <= 7; j++){
+					if (bpos[i][j].chessPiece != null){
+						bpos[i][j].chessPiece.drawChessPieceAtLocation();
+					}
 				}
 			}
-		}
-		
-		showLegalMove(true);
-		
-		if(my2ndClick.getLocation() != null){
-			my2ndClick.drawAtLocation();
-		}
-		
-		if(myWrongClick.getLocation() != null){
-			myWrongClick.drawAtLocation();
-		}
-		
-		if(my1stClick.getLocation() != null){
-			my1stClick.drawAtLocation();}		           
-		
-		
+			
+			/*
+			 * Setting showLegalMove to "true" will show orange squares around
+			 * squares where a square can move towards. 	
+			 * 
+			 * Setting it to false turns this off.
+			 */
+			showLegalMove(true);
+			
+			/*
+			 * my2ndClick displays a green box that shows what square was previously
+			 * clicked on when a piece has been selected. 
+			 * 
+			 * This code snippet is placed higher than my1stClick to give 1st 
+			 * click priority over 2nd click when being drawn to the screen. 
+			 */
+			
+			if(clickArray[1].getLocation() != null){
+				clickArray[1].drawAtLocation();
+			}
+			
+			/*
+			 * my1stClick displays a blue box on the square where the 1st click
+			 * has been made. If the first click was on an occupied spot the blue
+			 * box will remain around that square until it is "unclicked" or a
+			 * legal move has been made.
+			 */
+			
+			if(clickArray[0].getLocation() != null){
+				clickArray[0].drawAtLocation();}		
+			/* Disable Texturing */
 		glDisable(GL_TEXTURE_2D);
 	}
 	
-	private void showLegalMove(boolean enabled){
-		if (enabled){
-			if (bpos[chaX[0]][intY[0]].chessPiece == null){
+	private void showLegalMove(boolean enable){
+		/*
+		 * Shows orange squares for the legal move positions of the current piece
+		 * selected. 
+		 */
+		
+		if (enable){
+			if (bpos[mc.getChaX(0)][mc.getIntY(0)].chessPiece == null){
 			}else{
-				bpos[chaX[0]][intY[0]].chessPiece.showMove(bpos);
+				bpos[mc.getChaX(0)][mc.getIntY(0)].chessPiece.showMove(bpos);
 			}
 		}
 	}
 	
-	
 	private void setUpPieces(){
 		
-		/*
-		 * White Pieces
+		/* 
+		 * Fills up the different arrays with appropriate pieces 
 		 */
+		
+			/*
+			 * White Pieces
+			 */
 		for (int i = 0; i < 8; i++){
 			whitePieces [i] = new Pawn('w');
 		}
@@ -238,9 +265,9 @@ public class Screen {
 		whitePieces [14] = new Knight('w');
 		whitePieces [15] = new Rook('w');
 		
-		/*
-		 * Black Pieces
-		 */
+			/*
+			 * Black Pieces
+			 */
 		for (int j = 0; j < 8; j++){
 			blackPieces [j] = new Pawn('b');
 		}
@@ -252,6 +279,11 @@ public class Screen {
 		blackPieces [13] = new Bishop('b');
 		blackPieces [14] = new Knight('b');
 		blackPieces [15] = new Rook('b');
+		
+		/*
+		 * The following for loop loads all  the pieces into the board
+		 * position array.  
+		 */
 		
 		for (int x = 0; x <=7; x++){
 			bpos[x][6].setOccupiedPiece(blackPieces[x]);
@@ -270,150 +302,5 @@ public class Screen {
 			letterPosition++;
 			numberPosition = 1;
 		}
-	}
-	
-	public void movePiece(String oldpos, String newpos){
-	
-		int nx = Character.getNumericValue(newpos.charAt(0))-10;
-		int ny = Character.getNumericValue(newpos.charAt(1))-1;
-	
-		int ox = Character.getNumericValue(oldpos.charAt(0))-10;
-		int oy = Character.getNumericValue(oldpos.charAt(1))-1;
-		
-		bpos[ox][oy].chessPiece.setClickPosition(ox,oy,nx,ny);
-		
-		if(bpos[ox][oy].chessPiece.checkMove(bpos)){
-			System.out.println(bpos[ox][oy].chessPiece.checkMove(bpos));
-			System.out.println("Yep thats a legal move!");
-			bpos[ox][oy].chessPiece.setMoveCount(1);
-			bpos[nx][ny].chessPiece = bpos[ox][oy].chessPiece;
-			bpos[ox][oy].chessPiece = null;
-			firstClick--;
-		}else{
-			System.out.println(bpos[ox][oy].chessPiece.checkMove(bpos));
-			System.out.println("That is an illegal move for that piece!");
-		}
-	
-	}
-	
-	public void input(){
-		// Mouse Events
-		int divide = 77;
-		int mouseX = Mouse.getX();
-			// OpenGL Y-Axis is always inverted!
-		int mouseY = (screenSizeH-1)- Mouse.getY();
-		String mousePosition;
-			try {
-				if (Mouse.isButtonDown(0)) {
-						// Check if the click is within the boards boundary
-					if(mouseX > 190 && mouseX <= (191 + divide*8) && mouseY >52  && mouseY <= (52 + divide*8)){
-							mousePosition = checkMouseClickPositionX(mouseX, divide) + 
-									 checkMouseClickPositionY(mouseY, divide);
-							
-							chaX[firstClick] = Character.getNumericValue(mousePosition.charAt(0)) -10;
-							intY[firstClick] = Character.getNumericValue(mousePosition.charAt(1)-1);
-							//System.out.println(mousePosition);
-								// Check if position clicked is occupied
-							if(bpos[chaX[0]][intY[0]].isOccupied() == false){
-								System.out.println("This place is not occupied!");
-									// If not occupied highlight the clicked box
-									// and unhighlight any second click boxes
-								my1stClick.setOutlinePositon(mousePosition);
-								my2ndClick.setOutlinePositon(null);
-								
-							}	// If not occupied...
-							else{
-									// Check if this is the first click
-								if (firstClick == 0){
-									System.out.println("\n" + "First Click!");
-									System.out.println();
-									my1stClick.setOutlinePositon(mousePosition);
-									my2ndClick.setOutlinePositon(null);
-									myWrongClick.setOutlinePositon(null);
-									firstClick++;
-								}else if(bpos[chaX[1]][intY[1]].isOccupied() && 
-										bpos[chaX[0]][intY[0]].chessPiece == bpos[chaX[1]][intY[1]].chessPiece){
-									System.out.println("\n" + "This is the same spot!");
-									System.out.println();
-									my2ndClick.setOutlinePositon(null);
-									myWrongClick.setOutlinePositon(null);
-									firstClick--;
-									System.out.println("\n" + " Out of else if 2");
-//								}else if (bpos[chaX[1]][intY[1]].isOccupied() &&
-//										bpos[chaX[0]][intY[0]].chessPiece != bpos[chaX[1]][intY[1]].chessPiece){
-//									System.out.println("Second Click!");
-//									my2ndClick.setOutlinePositon(mousePosition);
-//									System.out.println("That spot is occupied by another piece!");
-//									myWrongClick.setOutlinePositon(mousePosition);
-//									//firstClick--;
-								}else{
-									System.out.println("\n" + "Second Click!");
-									System.out.println();
-									my2ndClick.setOutlinePositon(mousePosition);
-									myWrongClick.setOutlinePositon(null);
-									movePiece(bpos[chaX[0]][intY[0]].getLocation() , bpos[chaX[1]][intY[1]].getLocation());
-									//firstClick--;
-								}
-							}
-								// Print out the positions of the first and second click
-							System.out.println("Position 1 = " + bpos[chaX[0]][intY[0]].getLocation());
-							System.out.println("Position 2 = " + bpos[chaX[1]][intY[1]].getLocation());
-							System.out.println();
-							
-					}else{
-						System.out.println("Off Board Click");
-					}
-				}
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-	}
-	
-	public String checkMouseClickPositionX(int x, int divide){
-		if (x > 190 && x <= (191 + divide)){
-			return "A";
-		}else if(x > (191 + divide) && x <= (191 + divide*2)){
-			return "B";
-		}else if(x > (191 + divide*2) && x <= (191 + divide*3)){
-			return "C";
-		}else if(x > (191 + divide*3) && x <= (191 + divide*4)){
-			return "D";
-		}else if(x > (191 + divide*4) && x <= (191 + divide*5)){
-			return "E";
-		}else if(x > (191 + divide*5) && x <= (191 + divide*6)){
-			return "F";
-		}else if(x > (191 + divide*6) && x <= (191 + divide*7)){
-			return "G";
-		}else if(x > (191 + divide*7) && x <= (191 + divide*8)){
-			return "H";
-		}else{
-			return "This position is not on the chess board!";
-		}
-	}
-	
-	public String checkMouseClickPositionY(int y, int divide){
-			
-		if (y > 52 && y <= (52 + divide)){
-			return "8";
-		}else if(y > (52 + divide) && y <= (52 + divide*2)){
-			return "7";
-		}else if(y > (52 + divide*2) && y <= (52 + divide*3)){
-			return "6";
-		}else if(y > (52 + divide*3) && y <= (52 + divide*4)){
-			return "5";
-		}else if(y > (52 + divide*4) && y <= (52 + divide*5)){
-			return "4";
-		}else if(y > (52 + divide*5) && y <= (52 + divide*6)){
-			return "3";
-		}else if(y > (52 + divide*6) && y <= (52 + divide*7)){
-			return "2";
-		}else if(y > (52 + divide*7) && y <= (52 + divide*8)){
-			return "1";
-		}else{
-			return "This position is not on the chess board!";
-		}
-		
 	}
 }
