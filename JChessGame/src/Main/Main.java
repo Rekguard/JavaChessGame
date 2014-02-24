@@ -6,7 +6,7 @@ public class Main {
 
 	public static void main(String[] args) {
 	
-		new Screen(1100,720);
+		new Screen(1000,720);
 		
 	}
 
