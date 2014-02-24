@@ -135,11 +135,18 @@ public class Knight extends ChessPiece {
 		int chaArrayPos = Character.getNumericValue(charPosition) - 10;
 		int numArrayPos = numPosition - 1;
 		
-		
+			/* The following variables are used to set out a perimeter
+			 * that checks how close the knight is to the edge of the 
+			 * board.
+			 * 
+			 * LD stands for Left/Down.
+			 * RU stands for Right/Up.
+			 * 
+			 */
 		
 		int farLD = 0;		// Far Left side and Down have the same value
 		int clsLD = 1;		// Close Left side and Down have the same value
-		int clsRU = 5;		// Close Right side and Up have the same value
+		int clsRU = 6;		// Close Right side and Up have the same value
 		int farRU = 7;		// Far Right side and Up have the same value
 		
 		
@@ -149,65 +156,72 @@ public class Knight extends ChessPiece {
 			oppositeColour = "White";
 		}
 		
-		
 			/* NNW */
 		if(chaArrayPos > farLD && numArrayPos < clsRU){
-			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-1][oPosY+2].getLocation())){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-1][oPosY+2].getLocation())
+					&& bpShow[nPosX][nPosY].isOccupied()== false){
 				return true;
 			}
 		}
 		
 		/* NWW */
 		if(chaArrayPos > clsLD && numArrayPos < farRU){
-			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-2][oPosY+1].getLocation())){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-2][oPosY+1].getLocation())
+					&& bpShow[nPosX][nPosY].isOccupied()== false){
 				return true;
 			}
 		}
 		
 			/* SWW */
 		if(chaArrayPos > clsLD && numArrayPos > farLD){
-			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-2][oPosY-1].getLocation())){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-2][oPosY-1].getLocation())
+					&& bpShow[nPosX][nPosY].isOccupied()== false){
 				return true;
 			}
 		}
 		
 			/* SSW */
 		if(chaArrayPos > farLD && numArrayPos > clsLD){
-			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-1][oPosY-2].getLocation())){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX-1][oPosY-2].getLocation())
+					&& bpShow[nPosX][nPosY].isOccupied()== false){
 				return true;
 			}
 		}
 		
 		/* SSE */
 		if(chaArrayPos < farRU && numArrayPos > clsLD){
-			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+1][oPosY-2].getLocation())){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+1][oPosY-2].getLocation())
+					&& bpShow[nPosX][nPosY].isOccupied()== false){
 				return true;
 			}
 		}
 		
 			/* SEE */
+		
 		if(chaArrayPos < clsRU && numArrayPos > farLD){
-			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+2][oPosY-1].getLocation())){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+2][oPosY-1].getLocation())
+					&& bpShow[nPosX][nPosY].isOccupied()== false){
 				return true;
 			}
 		}
 		
 			/* NEE */
 		if( chaArrayPos < clsRU && numArrayPos < farRU){
-			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+2][oPosY+1].getLocation())){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+2][oPosY+1].getLocation())
+					&& bpShow[nPosX][nPosY].isOccupied()== false){
 				return true;
 			}
 		}
 		
 			/* NNE */
 		if( chaArrayPos < farRU && numArrayPos < clsRU){
-			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+1][oPosY+2].getLocation())){
+			if(bpShow[nPosX][nPosY].getLocation().equals(bpShow[oPosX+1][oPosY+2].getLocation())
+					&& bpShow[nPosX][nPosY].isOccupied()== false){
 				return true;
 			}
 		}
 		
-		
-		
+		/* If nothing no move is available return false */
 		return false;
 	}
 }
